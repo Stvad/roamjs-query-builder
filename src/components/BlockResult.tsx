@@ -31,5 +31,8 @@ export const BlockResult = ({timelineElements, blockUid}: { timelineElements: Re
         })()
     }, [timelineElements, blockUid])
 
-    return <CellEmbed uid={blockUid}/>
+    return <div>
+        <h3>{timelineElements.length} results</h3>
+        <CellEmbed uid={blockUid}/>
+    </div>
 }
