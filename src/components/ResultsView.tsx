@@ -34,6 +34,7 @@ import setInputSetting from "roamjs-components/util/setInputSetting";
 import getUids from "roamjs-components/dom/getUids";
 import Charts from "./Charts";
 import Timeline from "./Timeline";
+import {BlockResult} from './BlockResult'
 
 type Sorts = { key: string; descending: boolean }[];
 type FilterData = Record<string, Filters>;
@@ -139,7 +140,7 @@ const ResultHeader = ({
   );
 };
 
-const CellEmbed = ({ uid }: { uid: string }) => {
+export const CellEmbed = ({ uid }: { uid: string }) => {
   const contentRef = useRef(null);
   useEffect(() => {
     window.roamAlphaAPI.ui.components.renderBlock({
@@ -337,10 +338,16 @@ const QueryUsed = ({ parentUid }: { parentUid: string }) => {
 
 const SUPPORTED_LAYOUTS = [
   { id: "table", icon: "join-table" },
+  { id: "block", icon: "join-table" },
   { id: "line", icon: "chart" },
   { id: "bar", icon: "vertical-bar-chart-asc" },
   { id: "timeline", icon: "timeline-events" },
 ] as const;
+
+function getResultsBlockUid(parentUid: any) {
+  const node = getSubTree({key: 'block-result', parentUid})
+  return node.uid
+}
 
 const ResultsView: typeof window.roamjs.extension.queryBuilder.ResultsView = ({
   parentUid,
@@ -837,6 +844,8 @@ const ResultsView: typeof window.roamjs.extension.queryBuilder.ResultsView = ({
             <Charts type="bar" data={allResults} columns={columns.slice(1)} />
           ) : layout === "timeline" ? (
             <Timeline timelineElements={allResults} />
+          ) : layout === "block" ? (
+            <BlockResult timelineElements={allResults} blockUid={getResultsBlockUid(parentUid)} />
           ) : (
             <div>Layout `{layout}` is not supported</div>
           )
